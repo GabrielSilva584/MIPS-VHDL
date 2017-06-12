@@ -5,23 +5,23 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 entity alu is
 	
 	generic(
-		CONSTANT bits_c: integer;
+		CONSTANT bits_c: integer
 		CONSTANT aluCtrl_c: integer
 	);
 	
 	port(
-		a, b			: in		STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		a, b		: in		STD_LOGIC_VECTOR(bits_c-1 downto 0);
 		alucontrol	: in		STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
 		result		: buffer	STD_LOGIC_VECTOR(bits_c-1 downto 0);
-		zero			: out		STD_LOGIC
+		zero		: out		STD_LOGIC
 	);
 	
 end entity;
 
 architecture behave of alu is
-	constant zero_const : STD_LOGIC_VECTOR(bits_c-1 downto 0) := (others => '0');
-	signal comp2 : STD_LOGIC_VECTOR(bits_c downto 0);
 	
+	constant zero_const : STD_LOGIC_VECTOR(bits_c-1 downto 0) := (others => '0');
+
 begin
 	process(alucontrol, a, b) is
 	begin

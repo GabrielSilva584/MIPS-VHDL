@@ -8,7 +8,7 @@ entity regfile is -- three-port register file
 		we3				: in		STD_LOGIC;
 		ra1, ra2, wa3	: in		STD_LOGIC_VECTOR(4 downto 0);
 		wd3				: in		STD_LOGIC_VECTOR(31 downto 0);
-		rd1, rd2			: out		STD_LOGIC_VECTOR(31 downto 0)
+		rd1, rd2		: out		STD_LOGIC_VECTOR(31 downto 0)
 	);
 end;
 
