@@ -3,54 +3,61 @@ use IEEE.STD_LOGIC_1164.all;
 
 
 entity mips is -- single cycle MIPS processor
+	
+	generic(
+		CONSTANT opCode_c : INTEGER; --6
+		CONSTANT aluCtrl_c: INTEGER; --3
+		CONSTANT bits_c   : INTEGER --32
+	);
+	
 	port(
-		clk, reset			: in		STD_LOGIC;
-		pc						: out		STD_LOGIC_VECTOR(31 downto 0);
-		instr					: in		STD_LOGIC_VECTOR(31 downto 0);
-		memwrite				: out		STD_LOGIC;
-		aluout, writedata	: out		STD_LOGIC_VECTOR(31 downto 0);
-		readdata				: in		STD_LOGIC_VECTOR(31 downto 0)
+		i_clk, i_reset			  : in		STD_LOGIC;
+		o_pc					     : out		STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		i_instr				     : in		STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		o_memwrite			     : out		STD_LOGIC;
+		o_aluout, o_writedata  : out		STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		i_readdata			     : in		STD_LOGIC_VECTOR(bits_c-1 downto 0)
 	);
 end;
 
 architecture struct of mips is
 	component controller
 	port(
-		op, funct			: in		STD_LOGIC_VECTOR(5 downto 0);
-		zero				: in		STD_LOGIC;
-		memtoreg, memwrite	: out		STD_LOGIC;
-		pcsrc, alusrc		: out		STD_LOGIC;
-		regdst, regwrite	: out		STD_LOGIC;
-		jump				: out		STD_LOGIC;
-		alucontrol			: out		STD_LOGIC_VECTOR(2 downto 0)
+		i_op, i_funct			   : in		STD_LOGIC_VECTOR(opCode_c-1 downto 0);
+		i_zero				      : in		STD_LOGIC;
+		o_memtoreg, o_memwrite  : out		STD_LOGIC;
+		o_pcsrc, o_alusrc		   : out		STD_LOGIC;
+		o_regdst, o_regwrite	   : out		STD_LOGIC;
+		o_jump				      : out		STD_LOGIC;
+		o_alucontrol			   : out		STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0)
 	);
 	end component;
 	component datapath
 	port(
-		clk, reset			: in		STD_LOGIC;
-		memtoreg, pcsrc		: in		STD_LOGIC;
-		alusrc, regdst		: in		STD_LOGIC;
-		regwrite, jump		: in		STD_LOGIC;
-		alucontrol			: in		STD_LOGIC_VECTOR(2 downto 0);
-		zero				: out		STD_LOGIC;
-		pc					: buffer	STD_LOGIC_VECTOR(31 downto 0);
-		instr				: in		STD_LOGIC_VECTOR(31 downto 0);
-		aluout, writedata	: buffer	STD_LOGIC_VECTOR(31 downto 0);
-		readdata			: in		STD_LOGIC_VECTOR(31 downto 0));
+		i_clk, i_reset			 : in		STD_LOGIC;
+		i_memtoreg, i_pcsrc	 : in		STD_LOGIC;
+		i_alusrc, i_regdst	 : in		STD_LOGIC;
+		i_regwrite, i_jump	 : in		STD_LOGIC;
+		i_alucontrol			 : in		STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
+		o_zero				    : out		STD_LOGIC;
+		o_pc					    : buffer	STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		i_instr				    : in		STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		o_aluout, o_writedata : buffer	STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		i_readdata			    : in		STD_LOGIC_VECTOR(bits_c-1 downto 0));
 	end component;
 	
-	signal memtoreg, alusrc, regdst, regwrite, jump, pcsrc:	STD_LOGIC;
-	signal zero:	STD_LOGIC;
-	signal alucontrol:	STD_LOGIC_VECTOR(2 downto 0);
+	signal i_memtoreg, i_alusrc, i_regdst, i_regwrite, i_jump, i_pcsrc:	STD_LOGIC;
+	signal o_zero:	STD_LOGIC;
+	signal i_alucontrol:	STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
 begin
 	cont: controller
 		port map(
-			instr(31 downto 26), instr(5 downto 0), zero, memtoreg,
-			memwrite, pcsrc, alusrc, regdst,regwrite, jump, alucontrol
+			i_instr(bits_c-1 downto (bits_c - opCode_c)), i_instr(opCode_c-1 downto 0), o_zero, i_memtoreg,
+			memwrite, i_pcsrc, i_alusrc, i_regdst,i_regwrite, i_jump, i_alucontrol
 		);
 	dp: datapath
 		port map(
-			clk, reset, memtoreg, pcsrc, alusrc,regdst, regwrite, jump, 
-			alucontrol, zero, pc, instr, aluout, writedata,readdata
+			i_clk, i_reset, i_memtoreg, i_pcsrc, i_alusrc,i_regdst, i_regwrite, i_jump, 
+			i_alucontrol, o_zero, o_pc, i_instr, o_aluout, o_writedata,i_readdata
 		);
 end;
