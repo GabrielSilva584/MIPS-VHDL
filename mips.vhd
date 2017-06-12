@@ -53,7 +53,7 @@ begin
 	cont: controller
 		port map(
 			i_instr(bits_c-1 downto (bits_c - opCode_c)), i_instr(opCode_c-1 downto 0), o_zero, i_memtoreg,
-			memwrite, i_pcsrc, i_alusrc, i_regdst,i_regwrite, i_jump, i_alucontrol
+			o_memwrite, i_pcsrc, i_alusrc, i_regdst,i_regwrite, i_jump, i_alucontrol
 		);
 	dp: datapath
 		port map(
