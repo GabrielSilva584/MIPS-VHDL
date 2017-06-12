@@ -3,52 +3,55 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.STD_LOGIC_UNSIGNED.all;
 
 entity alu is
-	
+
 	generic(
-		CONSTANT bits_c: integer; --32
-		CONSTANT aluCtrl_c: integer --3
+		CONSTANT bits_c    : INTEGER; --32
+		CONSTANT aluCtrl_c : INTEGER  --3
 	);
-	
+
 	port(
-		a, b			: in		STD_LOGIC_VECTOR(bits_c-1 downto 0);
-		alucontrol	: in		STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
-		result		: buffer	STD_LOGIC_VECTOR(bits_c-1 downto 0);
-		zero			: out		STD_LOGIC
+		i_a, i_b			: in		STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		i_alucontrol	: in		STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
+		o_result		   : buffer	STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		o_zero			: out		STD_LOGIC
 	);
 	
 end entity;
 
 architecture behave of alu is
-	constant zero_const : STD_LOGIC_VECTOR(bits_c-1 downto 0) := (others => '0');
-	signal comp2 : STD_LOGIC_VECTOR(bits_c downto 0);
-	
+
+	CONSTANT zero_const_c : STD_LOGIC_VECTOR(bits_c-1 downto 0) := (others => '0');
+
 begin
-	process(alucontrol, a, b) is
+
+	process(i_alucontrol, i_a, i_b) is
 	begin
-		case alucontrol is
+		case i_alucontrol is
 			when "000" => -- and
-				result <= a and b;
+				o_result <= i_a and i_b;
 			when "001" => -- or
-				result <= a or b;
+				o_result <= i_a or i_b;
 			when "010" => -- add
-				result <= a + b;
+				o_result <= i_a + i_b;
 			when "011" => -- not used
-				result <= zero_const; --null;
+				o_result <= zero_const; --null;
 			when "100" => -- and
-				result <= a and not b;
+				o_result <= i_a and not i_b;
 			when "101" => -- or
-				result <= a or not b;
+				o_result <= i_a or not i_b;
 			when "110" => -- sub
-				result <= a - b;
+				o_result <= i_a - i_b;
 			when "111" => -- slt
-				if (a<b) then
-					result <= (0 => '1', others =>'0');
+				if (i_a<i_b) then
+					o_result <= (0 => '1', others =>'0');
 				else
-					result <= zero_const;
+					o_result <= zero_const_c;
 				end if;
 			when others =>
-				result <= zero_const;
+				o_result <= zero_const_c;
 		end case;
 	end process;
-	zero <= '1' when result = zero_const else '0';
+
+	o_zero <= '1' when o_result = zero_const_c else '0';
+	
 end;
