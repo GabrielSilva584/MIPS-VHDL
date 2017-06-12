@@ -8,6 +8,7 @@ entity datapath is -- MIPS datapath
 		CONSTANT aluCtrl_c : INTEGER; --3
 		CONSTANT adress_c : INTEGER; --16
 		CONSTANT reg_c : INTEGER --5
+		CONSTANT instr_c : INTEGER --32
 	);
 	port(
 		clk, reset			: in		STD_LOGIC;
