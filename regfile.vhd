@@ -3,17 +3,21 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.STD_LOGIC_UNSIGNED.all;
 
 entity regfile is -- three-port register file
+	generic(
+		CONSTANT bits_c : INTEGER; --32
+		CONSTANT reg_c : INTEGER --5
+	);
 	port(
 		clk				: in		STD_LOGIC;
 		we3				: in		STD_LOGIC;
-		ra1, ra2, wa3	: in		STD_LOGIC_VECTOR(4 downto 0);
-		wd3				: in		STD_LOGIC_VECTOR(31 downto 0);
-		rd1, rd2			: out		STD_LOGIC_VECTOR(31 downto 0)
+		ra1, ra2, wa3	: in		STD_LOGIC_VECTOR(reg_c - 1 downto 0);
+		wd3				: in		STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+		rd1, rd2			: out		STD_LOGIC_VECTOR(bits_c - 1 downto 0)
 	);
 end;
 
 architecture behave of regfile is
-	type ramtype is array(31 downto 0) of STD_LOGIC_VECTOR(31 downto 0);
+	type ramtype is array(bits_c - 1 downto 0) of STD_LOGIC_VECTOR(bits_c - 1 downto 0);
 	signal mem: ramtype;
 begin
 	-- three-ported register file
