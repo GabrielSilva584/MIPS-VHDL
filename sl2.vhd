@@ -9,13 +9,13 @@ entity sl2 is -- shift left by 2
 		CONSTANT bits_c : INTEGER --32
 	);
 	port(
-		a: in 	STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-		y: out	STD_LOGIC_VECTOR(bits_c - 1 downto 0)
+		i_a		: in 	STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+		o_y		: out	STD_LOGIC_VECTOR(bits_c - 1 downto 0)
 	);
 end;
 
 architecture behave of sl2 is
 begin
-	y(bits_c - 1 downto 2) <= a(bits_c - 3 downto 0);
-	y(1 downto 0) <= (others => '0');
+	o_y(bits_c - 1 downto 2) <= i_a(bits_c - 3 downto 0);
+	o_y(1 downto 0) <= (others => '0');
 end;
