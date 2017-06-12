@@ -13,7 +13,16 @@ entity flopr is -- flip-flop with synchronous reset
 	);
 end;
 
-architecture asynchronous of flopr is
+architecture synchronous of flopr is
 begin
-	-- Implementar
+	
+	risingEdge: PROCESS(clk, reset)
+	BEGIN
+		IF (clk'EVENT AND clk'LAST_VALUE = '0') THEN
+			IF reset = '1' THEN q <= (others => '0');
+			ELSE q <= d;
+			END IF;
+		END IF;
+	END PROCESS;
+	
 end;
