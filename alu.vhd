@@ -3,16 +3,25 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.STD_LOGIC_UNSIGNED.all;
 
 entity alu is
+	
+	generic(
+		CONSTANT bits_c: integer
+		CONSTANT aluCtrl_c: integer
+	);
+	
 	port(
-		a, b		: in		STD_LOGIC_VECTOR(31 downto 0);
-		alucontrol	: in		STD_LOGIC_VECTOR(2 downto 0);
-		result		: buffer	STD_LOGIC_VECTOR(31 downto 0);
+		a, b		: in		STD_LOGIC_VECTOR(bits_c-1 downto 0);
+		alucontrol	: in		STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
+		result		: buffer	STD_LOGIC_VECTOR(bits_c-1 downto 0);
 		zero		: out		STD_LOGIC
 	);
+	
 end entity;
 
 architecture behave of alu is
-	constant zero_const : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
+	
+	constant zero_const : STD_LOGIC_VECTOR(bits_c-1 downto 0) := (others => '0');
+
 begin
 	process(alucontrol, a, b) is
 	begin
@@ -42,4 +51,4 @@ begin
 		end case;
 	end process;
 	zero <= '1' when result = zero_const else '0';
-end nula;
+end;
