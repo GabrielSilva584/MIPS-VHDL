@@ -25,9 +25,9 @@ architecture struct of controller is
 	
 	component maindec
 	generic(
-		CONSTANT opCode_c: INTEGER; --6
-		CONSTANT ctrl_c: INTEGER; --9
-		CONSTANT aluOp_c: INTEGER --2
+		CONSTANT opCode_c		: INTEGER; --6
+		CONSTANT ctrl_c		: INTEGER; --9
+		CONSTANT aluOp_c		: INTEGER --2
 	);
 	port(
 		i_op							: in STD_LOGIC_VECTOR(opCode_c-1 downto 0);
