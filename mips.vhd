@@ -46,18 +46,18 @@ architecture struct of mips is
 		i_readdata			    : in		STD_LOGIC_VECTOR(bits_c-1 downto 0));
 	end component;
 	
-	signal i_memtoreg, i_alusrc, i_regdst, i_regwrite, i_jump, i_pcsrc:	STD_LOGIC;
-	signal o_zero:	STD_LOGIC;
-	signal i_alucontrol:	STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
+	signal memtoreg_s, alusrc_s, regdst_s	 			:	STD_LOGIC;
+	signal zero_s, regwrite_s, jump_s, pcsrc_s		:	STD_LOGIC;
+	signal alucontrol_s										:	STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
 begin
 	cont: controller
 		port map(
-			i_instr(bits_c-1 downto (bits_c - opCode_c)), i_instr(opCode_c-1 downto 0), o_zero, i_memtoreg,
-			o_memwrite, i_pcsrc, i_alusrc, i_regdst,i_regwrite, i_jump, i_alucontrol
+			i_instr(bits_c-1 downto (bits_c - opCode_c)), i_instr(opCode_c-1 downto 0), zero_s, memtoreg_s,
+			o_memwrite, pcsrc_s, alusrc_s, regdst_s, regwrite_s, jump_s, alucontrol_s
 		);
 	dp: datapath
 		port map(
-			i_clk, i_reset, i_memtoreg, i_pcsrc, i_alusrc,i_regdst, i_regwrite, i_jump, 
-			i_alucontrol, o_zero, o_pc, i_instr, o_aluout, o_writedata,i_readdata
+			i_clk, i_reset, memtoreg_s, pcsrc_s, alusrc_s, regdst_s, regwrite_s, jump_s, 
+			alucontrol_s, zero_s, o_pc, i_instr, o_aluout, o_writedata, i_readdata
 		);
 end;
