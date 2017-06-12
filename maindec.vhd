@@ -3,18 +3,26 @@ use IEEE.STD_LOGIC_1164.all;
 
 
 entity maindec is -- main control decoder
+	
+	generic(
+		CONSTANT opCode_c: INTEGER; --6
+		CONSTANT ctrl_c: INTEGER; --9
+		CONSTANT aluOp_c: INTEGER --2
+	);
+	
 	port(
-		op					: in		STD_LOGIC_VECTOR(5 downto 0);
+		op					: in		STD_LOGIC_VECTOR(opCode_c-1 downto 0);
 		memtoreg, memwrite	: out		STD_LOGIC;
 		branch, alusrc		: out		STD_LOGIC;
 		regdst, regwrite	: out		STD_LOGIC;
 		jump				: out		STD_LOGIC;
-		aluop				: out		STD_LOGIC_VECTOR(1 downto 0)
+		aluop				: out		STD_LOGIC_VECTOR(aluOp_c-1 downto 0)
 	);
+	
 end;
 
 architecture behave of maindec is
-	signal controls: STD_LOGIC_VECTOR(8 downto 0);
+	signal controls: STD_LOGIC_VECTOR(ctrl_c-1 downto 0);
 begin
 	process(op)
 	begin
