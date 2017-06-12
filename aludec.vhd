@@ -3,14 +3,25 @@ use IEEE.STD_LOGIC_1164.all;
 
 
 entity aludec is -- ALU control decoder
-	port(
-		funct		: in		STD_LOGIC_VECTOR(5 downto 0);
-		aluop		: in		STD_LOGIC_VECTOR(1 downto 0);
-		alucontrol	: out		STD_LOGIC_VECTOR(2 downto 0)
+	
+	generic(
+		CONSTANT opCode_c: INTEGER; --6
+		CONSTANT aluCtrl_c: INTEGER; --3
+		CONSTANT aluOp_c: INTEGER --2
 	);
+	
+	port(
+		funct		: in		STD_LOGIC_VECTOR(opCode_c-1 downto 0);
+		aluop		: in		STD_LOGIC_VECTOR(aluOp_c-1 downto 0);
+		alucontrol	: out		STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0)
+	);
+	
 end;
+
 architecture behave of aludec is
+
 begin
+	
 	process(aluop, funct) begin
 		case aluop is
 			when "00" => alucontrol <= "010"; -- add (for 1b/sb/addi)
@@ -26,4 +37,5 @@ begin
 				end case;
 		end case;
 	end process;
+	
 end;
