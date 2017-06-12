@@ -6,7 +6,7 @@ use IEEE.STD_LOGIC_1164.all;
 
 entity sl2 is -- shift left by 2
 	generic(
-		CONSTANT bits_c : INTEGER
+		CONSTANT bits_c : INTEGER --32
 	);
 	port(
 		a: in 	STD_LOGIC_VECTOR(bits_c - 1 downto 0);

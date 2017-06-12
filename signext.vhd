@@ -4,8 +4,8 @@ use IEEE.STD_LOGIC_1164.all;
 
 entity signext is -- sign extender
 	generic(
-		CONSTANT bits_c: integer;
-		CONSTANT adress_c: integer
+		CONSTANT bits_c: integer; --32
+		CONSTANT adress_c: integer --16
 	);
 	
 	port(

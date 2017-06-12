@@ -5,8 +5,8 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 entity alu is
 	
 	generic(
-		CONSTANT bits_c: integer;
-		CONSTANT aluCtrl_c: integer
+		CONSTANT bits_c: integer; --32
+		CONSTANT aluCtrl_c: integer --3
 	);
 	
 	port(

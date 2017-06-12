@@ -4,10 +4,10 @@ use IEEE.STD_LOGIC_ARITH.all;
 
 entity datapath is -- MIPS datapath
 	generic(
-		CONSTANT bits_c : INTEGER;
-		CONSTANT aluCtrl_c : INTEGER;
-		CONSTANT adress_c : INTEGER;
-		CONSTANT reg_c : INTEGER
+		CONSTANT bits_c : INTEGER; --32
+		CONSTANT aluCtrl_c : INTEGER; --3
+		CONSTANT adress_c : INTEGER; --16
+		CONSTANT reg_c : INTEGER --5
 	);
 	port(
 		clk, reset			: in		STD_LOGIC;
