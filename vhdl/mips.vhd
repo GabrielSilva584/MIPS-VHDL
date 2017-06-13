@@ -44,11 +44,11 @@ architecture struct of mips is
 	end component;
 	component datapath
 	generic(
-		CONSTANT bits_c : INTEGER; --32
-		CONSTANT aluCtrl_c : INTEGER; --3
-		CONSTANT adress_c : INTEGER; --16
-		CONSTANT reg_c : INTEGER; --5
-		CONSTANT opCode_c: INTEGER --6
+		CONSTANT bits_c 		: INTEGER; --32
+		CONSTANT aluCtrl_c 	: INTEGER; --3
+		CONSTANT adress_c		: INTEGER; --16
+		CONSTANT reg_c 		: INTEGER; --5
+		CONSTANT opCode_c		: INTEGER --6
 	);
 	port(
 		i_clk, i_reset			 : in		STD_LOGIC;
@@ -66,13 +66,19 @@ architecture struct of mips is
 	signal memtoreg_s, alusrc_s, regdst_s	 			:	STD_LOGIC;
 	signal zero_s, regwrite_s, jump_s, pcsrc_s		:	STD_LOGIC;
 	signal alucontrol_s										:	STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
+	
+	ALIAS operation			: STD_LOGIC_VECTOR(opCode_c - 1 downto 0) is
+			i_instr(bits_c-1 downto (bits_c - opCode_c));
+			
+	ALIAS funct					: STD_LOGIC_VECTOR(opCode_c - 1 downto 0) is
+			i_instr(opCode_c-1 downto 0);
 begin
 	cont: controller
 		generic map(
 			opCode_c, aluCtrl_c, ctrl_c, aluOp_c	
 		)
 		port map(
-			i_instr(bits_c-1 downto (bits_c - opCode_c)), i_instr(opCode_c-1 downto 0), zero_s, memtoreg_s,
+			operation, funct, zero_s, memtoreg_s,
 			o_memwrite, pcsrc_s, alusrc_s, regdst_s, regwrite_s, jump_s, alucontrol_s
 		);
 	dp: datapath
