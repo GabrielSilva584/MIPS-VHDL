@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.all;
 entity adder is -- adder
 
 	generic(
-		CONSTANT bits_c: INTEGER
+		CONSTANT bits_c: INTEGER --32
 	);
 
 	port(

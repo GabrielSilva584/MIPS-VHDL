@@ -20,7 +20,7 @@ begin
 	
 	risingEdge: PROCESS(i_clk, i_reset)
 	BEGIN
-		IF (i_clk'EVENT AND i_clk'LAST_VALUE = '0') THEN
+		IF (i_clk'EVENT AND clk'LAST_VALUE = '0') THEN
 			IF i_reset = '1' THEN o_q <= (others => '0');
 			ELSE o_q <= i_d;
 			END IF;

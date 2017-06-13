@@ -34,7 +34,7 @@ begin
 			when "010" => -- add
 				o_result <= i_a + i_b;
 			when "011" => -- not used
-				o_result <= zero_const; --null;
+				o_result <= zero_const_c; --null;
 			when "100" => -- and
 				o_result <= i_a and not i_b;
 			when "101" => -- or

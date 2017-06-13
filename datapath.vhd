@@ -8,134 +8,143 @@ entity datapath is -- MIPS datapath
 		CONSTANT aluCtrl_c : INTEGER; --3
 		CONSTANT adress_c : INTEGER; --16
 		CONSTANT reg_c : INTEGER; --5
-		CONSTANT instr_c : INTEGER --32
+		CONSTANT opCode_c: INTEGER --6
 	);
 	port(
-		clk, reset			: in		STD_LOGIC;
-		memtoreg, pcsrc		: in		STD_LOGIC;
-		alusrc, regdst		: in		STD_LOGIC;
-		regwrite, jump		: in		STD_LOGIC;
-		alucontrol			: in		STD_LOGIC_VECTOR(aluCtrl_c - 1 downto 0);
-		zero				: out		STD_LOGIC;
-		pc					: buffer	STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-		instr				: in		STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-		aluout, writedata	: buffer	STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-		readdata			: in		STD_LOGIC_VECTOR(bits_c - 1 downto 0)
+		i_clk, i_reset			: in		STD_LOGIC;
+		i_memtoreg, i_pcsrc		: in		STD_LOGIC;
+		i_alusrc, i_regdst		: in		STD_LOGIC;
+		i_regwrite, i_jump		: in		STD_LOGIC;
+		i_alucontrol			: in		STD_LOGIC_VECTOR(aluCtrl_c - 1 downto 0);
+		o_zero				: out		STD_LOGIC;
+		o_pc					: buffer	STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+		i_instr				: in		STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+		o_aluout, o_writedata	: buffer	STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+		i_readdata			: in		STD_LOGIC_VECTOR(bits_c - 1 downto 0)
 	);
 end;
 architecture struct of datapath is
 	component alu
 		generic(
-			CONSTANT bits_c: INTEGER;
-			CONSTANT aluCtrl_c: INTEGER
+			CONSTANT bits_c: INTEGER; --32
+			CONSTANT aluCtrl_c: INTEGER --3
 		);
 		port(
-			a, b: in STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-			alucontrol: in STD_LOGIC_VECTOR(aluCtrl_c - 1 downto 0);
-			result: buffer STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-			zero: out STD_LOGIC
+			i_a, i_b: in STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+			i_alucontrol: in STD_LOGIC_VECTOR(aluCtrl_c - 1 downto 0);
+			o_result: buffer STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+			o_zero: out STD_LOGIC
 		);
 	end component;
 	component regfile
+		generic(
+			CONSTANT bits_c : INTEGER; --32
+			CONSTANT reg_c  : INTEGER --5
+		);
 		port(
-			clk: in STD_LOGIC;
-			we3: in STD_LOGIC;
-			ra1, ra2, wa3: in STD_LOGIC_VECTOR(4 downto 0);
-			wd3: in STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-			rd1, rd2: out STD_LOGIC_VECTOR(bits_c - 1 downto 0)
+			i_clk: in STD_LOGIC;
+			i_we3: in STD_LOGIC;
+			i_ra1, i_ra2, i_wa3: in STD_LOGIC_VECTOR(reg_c - 1 downto 0);
+			i_wd3: in STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+			o_rd1, o_rd2: out STD_LOGIC_VECTOR(bits_c - 1 downto 0)
 		);
 	end component;
 	component adder
 		generic(
-			CONSTANT bits_c : INTEGER
+			CONSTANT bits_c : INTEGER --32
 		);
 		port(
-			a, b: in STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-			y: out STD_LOGIC_VECTOR(bits_c - 1 downto 0)
+			i_a, i_b: in STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+			o_y: out STD_LOGIC_VECTOR(bits_c - 1 downto 0)
 		);
 	end component;
 	component sl2
 		generic(
-			CONSTANT bits_c : INTEGER
+			CONSTANT bits_c : INTEGER --32
 		);
 		port(
-			a: in STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-			y: out STD_LOGIC_VECTOR(bits_c - 1 downto 0)
-			);
+			i_a: in STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+			o_y: out STD_LOGIC_VECTOR(bits_c - 1 downto 0)
+		);
 	end component;
 	component signext
 		generic(
-			CONSTANT bits_c: INTEGER;
-			CONSTANT adress_c: INTEGER
+			CONSTANT bits_c: INTEGER; --32
+			CONSTANT adress_c: INTEGER --16
 		);
 		port(
-			a: in STD_LOGIC_VECTOR(adress_c - 1 downto 0);
-			y: out STD_LOGIC_VECTOR(bits_c - 1 downto 0)
+			i_a: in STD_LOGIC_VECTOR(adress_c - 1 downto 0);
+			o_y: out STD_LOGIC_VECTOR(bits_c - 1 downto 0)
 		);
 	end component;
 	component flopr
 		generic(
-			width: integer
+			width_g: integer
 		);
 		port(
-			clk, reset: in STD_LOGIC;
-			d: in STD_LOGIC_VECTOR(width-1 downto 0);
-			q: out STD_LOGIC_VECTOR(width-1 downto 0)
+			i_clk, i_reset: in STD_LOGIC;
+			i_d: in STD_LOGIC_VECTOR(width_g-1 downto 0);
+			o_q: out STD_LOGIC_VECTOR(width_g-1 downto 0)
 		);
 	end component;
 	component mux2
 		generic(
-			width: integer
+			width_g: integer
 		);
 		port(
-			i_d0, i_d1: in STD_LOGIC_VECTOR(width-1 downto 0);
+			i_d0, i_d1: in STD_LOGIC_VECTOR(width_g-1 downto 0);
 			i_s: in STD_LOGIC;
-			o_y: out STD_LOGIC_VECTOR(width-1 downto 0)
+			o_y: out STD_LOGIC_VECTOR(width_g-1 downto 0)
 		);
 	end component;
 	
-	signal writereg: STD_LOGIC_VECTOR(4 downto 0);
-	signal pcjump, pcnext, pcnextbr, pcplus4, pcbranch: STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-	signal signimm, signimmsh: STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-	signal srca, srcb, result: STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+	signal writereg_s: STD_LOGIC_VECTOR(reg_c - 1 downto 0);
+	signal pcjump_s, pcnext_s, pcnextbr_s, pcplus4_s, pcbranch_s: STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+	signal signimm_s, signimmsh_s: STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+	signal srca_s, srcb_s, result_s: STD_LOGIC_VECTOR(bits_c - 1 downto 0);
 begin
 -- next PC logic
-	pcjump <= pcplus4(31 downto 28) & instr(25 downto 0) & "00";
+	pcjump_s <= pcplus4_s(bits_c - 1 downto bits_c - opCode_c + 2) & i_instr(bits_c - opCode_c - 1 downto 0) & "00";
 	pcreg: flopr
 		generic map(bits_c)
-		port map(clk, reset, pcnext, pc);
+		port map(i_clk, i_reset, pcnext_s, o_pc);
 	pcadd1: adder
 		generic map(bits_c)
-		port map(pc, X"00000004", pcplus4);
+		port map(o_pc, X"00000004", pcplus4_s);
 	immsh: sl2
 		generic map(bits_c)
-		port map(signimm, signimmsh);
+		port map(signimm_s, signimmsh_s);
 	pcadd2: adder
 		generic map(bits_c)
-		port map(pcplus4, signimmsh, pcbranch);
+		port map(pcplus4_s, signimmsh_s, pcbranch_s);
 	pcbrmux: mux2
 		generic map(bits_c)
-		port map(pcplus4, pcbranch, pcsrc, pcnextbr);
+		port map(pcplus4_s, pcbranch_s, i_pcsrc, pcnextbr_s);
 	pcmux: mux2
 		generic map(bits_c)
-		port map(pcnextbr, pcjump, jump, pcnext);
+		port map(pcnextbr_s, pcjump_s, i_jump, pcnext_s);
 	-- register file logic
 	rf: regfile
-		port map(clk, regwrite, instr(25 downto 21), instr(20 downto 16), writereg, result, srca,	writedata);
+		generic map(bits_c, reg_c)
+		port map(i_clk, i_regwrite, i_instr(bits_c - opCode_c - 1 downto bits_c - opCode_c - reg_c),
+					i_instr(bits_c - opCode_c - reg_c - 1 downto bits_c - opCode_c - reg_c - reg_c),
+					writereg_s, result_s, srca_s,	o_writedata);
 	wrmux: mux2
-		generic map(5)
-		port map(instr(20 downto 16), instr(15 downto 11), regdst, writereg);
+		generic map(reg_c)
+		port map(i_instr(bits_c - opCode_c - reg_c - 1 downto bits_c - opCode_c - reg_c - reg_c),
+					i_instr(bits_c - opCode_c - reg_c - reg_c - 1 downto bits_c - opCode_c - reg_c - reg_c - reg_c),
+					i_regdst, writereg_s);
 	resmux: mux2
 		generic map(bits_c)
-		port map(aluout, readdata, memtoreg, result);
+		port map(o_aluout, i_readdata, i_memtoreg, result_s);
 	se: signext
 		generic map(bits_c, adress_c)
-		port map(instr(adress_c - 1 downto 0), signimm);
+		port map(i_instr(adress_c - 1 downto 0), signimm_s);
 	-- ALU logic
 	srcbmux: mux2
 		generic map(bits_c)
-		port map(writedata, signimm, alusrc, srcb);
+		port map(o_writedata, signimm_s, i_alusrc, srcb_s);
 	mainalu: alu
 		generic map(bits_c, aluCtrl_c)
-		port map(srca, srcb, alucontrol, aluout, zero);
+		port map(srca_s, srcb_s, i_alucontrol, o_aluout, o_zero);
 end;
