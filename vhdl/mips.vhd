@@ -5,13 +5,13 @@ use IEEE.STD_LOGIC_1164.all;
 entity mips is -- single cycle MIPS processor
 	
 	generic(
-		CONSTANT opCode_c : INTEGER; --6
-		CONSTANT aluCtrl_c: INTEGER; --3
-		CONSTANT bits_c   : INTEGER; --32
-		CONSTANT ctrl_c 	: INTEGER; --9
-		CONSTANT aluOp_c	: INTEGER; --2
-		CONSTANT adress_c : INTEGER; --16
-		CONSTANT reg_c 	: INTEGER --5
+		CONSTANT opCode_c : INTEGER := 6; --6
+		CONSTANT aluCtrl_c: INTEGER := 3; --3
+		CONSTANT bits_c   : INTEGER := 32; --32
+		CONSTANT ctrl_c 	: INTEGER := 9; --9
+		CONSTANT aluOp_c	: INTEGER := 2; --2
+		CONSTANT adress_c : INTEGER := 16; --16
+		CONSTANT reg_c 	: INTEGER :=5 --5
 	);
 	
 	port(
