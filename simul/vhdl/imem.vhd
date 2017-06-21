@@ -25,7 +25,7 @@ begin
 			mem(conv_integer(i)) := CONV_STD_LOGIC_VECTOR(0, 32);
 		end loop;
 		index := 0;
-		FILE_OPEN (mem_file, "dat/memfile_NOR2.dat", READ_MODE);
+		FILE_OPEN (mem_file, "memfile.dat", READ_MODE);
 		while not endfile(mem_file) loop
 			readline (mem_file, L);
 			result := 0;
