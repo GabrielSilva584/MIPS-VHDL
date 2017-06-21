@@ -22,19 +22,22 @@ architecture behave of alu is
 
 	CONSTANT zero_const_c : STD_LOGIC_VECTOR(bits_c-1 downto 0) := (others => '0');
 
+	ALIAS alucontrol_s : STD_LOGIC_VECTOR(2 downto 0) is
+		i_alucontrol(2 downto 0);
+
 begin
 
-	process(i_alucontrol, i_a, i_b) is
+	process(alucontrol_s, i_a, i_b) is
 	begin
-		case i_alucontrol is
+		case alucontrol_s is
 			when "000" => -- and
 				o_result <= i_a and i_b;
 			when "001" => -- or
 				o_result <= i_a or i_b;
 			when "010" => -- add
 				o_result <= i_a + i_b;
-			when "011" => -- not used
-				o_result <= zero_const_c; --null;
+			when "011" => -- nor
+				o_result <= i_a nor i_b;
 			when "100" => -- and
 				o_result <= i_a and not i_b;
 			when "101" => -- or

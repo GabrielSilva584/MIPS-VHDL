@@ -23,14 +23,18 @@ end;
 
 architecture behave of maindec is
 	signal controls_s		: STD_LOGIC_VECTOR(ctrl_c-1 downto 0);
+
+	ALIAS op_s : STD_LOGIC_VECTOR(5 downto 0) is
+		i_op(5 downto 0);
 begin
-	process(i_op)
+	process(op_s)
 	begin
-		case i_op is
+		case op_s is
 			when "000000" => controls_s <= "110000010"; -- Rtyp
 			when "100011" => controls_s <= "101001000"; -- LW
 			when "101011" => controls_s <= "001010000"; -- SW
 			when "000100" => controls_s <= "000100001"; -- BEQ
+			when "000110" => controls_s <= "000100011"; -- BLEZ
 			when "001000" => controls_s <= "101000000"; -- ADDI
 			when "000010" => controls_s <= "000000100"; -- J
 			when others   => controls_s <= "---------"; -- illegal i_op
