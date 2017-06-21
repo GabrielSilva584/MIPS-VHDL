@@ -55,6 +55,8 @@ begin
 		end case;
 	end process;
 
-	o_zero <= '1' when o_result = zero_const_c else '0';
+	o_zero <= 	'1' when o_result = zero_const_c else
+				'1' when o_result(bits_c - 1) = '1' and alucontrol_s = "100" else
+				'0';
 	
 end;

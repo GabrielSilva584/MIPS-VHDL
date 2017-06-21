@@ -28,6 +28,7 @@ begin
 		case aluop_s is
 			when "00" => o_alucontrol <= "010"; -- add (for 1b/sb/addi)
 			when "01" => o_alucontrol <= "110"; -- sub (for beq)
+			when "11" => o_alucontrol <= "100"; -- and (for blez)
 			when others =>
 				case funct_s is -- R-type instructions
 					when "100000" => o_alucontrol <= "010"; -- add
@@ -36,7 +37,7 @@ begin
 					when "100101" => o_alucontrol <= "001"; -- or
 					when "101010" => o_alucontrol <= "111"; -- slt
 					when "100111" => o_alucontrol <= "011"; -- nor 
-					when "001000" => o_alucontrol <= "???"; -- jr
+					when "001000" => o_alucontrol <= "---"; -- jr
 					when others   => o_alucontrol <= "---"; -- ???
 				end case;
 		end case;
