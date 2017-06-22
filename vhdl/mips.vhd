@@ -34,7 +34,7 @@ architecture struct of mips is
 	);
 	port(
 		i_op, i_funct			   : in		STD_LOGIC_VECTOR(opCode_c-1 downto 0);
-		i_zero				      : in		STD_LOGIC;
+		i_zero, i_ltz				      : in		STD_LOGIC;
 		o_memtoreg, o_memwrite  : out		STD_LOGIC;
 		o_pcsrc, o_alusrc		   : out		STD_LOGIC;
 		o_regdst, o_regwrite	   : out		STD_LOGIC;
@@ -56,7 +56,7 @@ architecture struct of mips is
 		i_alusrc, i_regdst	 : in		STD_LOGIC;
 		i_regwrite, i_jump	 : in		STD_LOGIC;
 		i_alucontrol			 : in		STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
-		o_zero				    : out		STD_LOGIC;
+		o_zero, o_ltz				    : out		STD_LOGIC;
 		o_pc					    : buffer	STD_LOGIC_VECTOR(bits_c-1 downto 0);
 		i_instr				    : in		STD_LOGIC_VECTOR(bits_c-1 downto 0);
 		o_aluout, o_writedata : buffer	STD_LOGIC_VECTOR(bits_c-1 downto 0);
@@ -64,7 +64,7 @@ architecture struct of mips is
 	end component;
 	
 	signal memtoreg_s, alusrc_s, regdst_s	 			:	STD_LOGIC;
-	signal zero_s, regwrite_s, jump_s, pcsrc_s		:	STD_LOGIC;
+	signal zero_s, ltz_s, regwrite_s, jump_s, pcsrc_s		:	STD_LOGIC;
 	signal alucontrol_s										:	STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
 	
 	ALIAS operation			: STD_LOGIC_VECTOR(opCode_c - 1 downto 0) is
@@ -78,7 +78,7 @@ begin
 			opCode_c, aluCtrl_c, ctrl_c, aluOp_c	
 		)
 		port map(
-			operation, funct, zero_s, memtoreg_s,
+			operation, funct, zero_s, ltz_s, memtoreg_s,
 			o_memwrite, pcsrc_s, alusrc_s, regdst_s, regwrite_s, jump_s, alucontrol_s
 		);
 	dp: datapath
@@ -87,6 +87,6 @@ begin
 		)
 		port map(
 			i_clk, i_reset, memtoreg_s, pcsrc_s, alusrc_s, regdst_s, regwrite_s, jump_s, 
-			alucontrol_s, zero_s, o_pc, i_instr, o_aluout, o_writedata, i_readdata
+			alucontrol_s, zero_s, ltz_s, o_pc, i_instr, o_aluout, o_writedata, i_readdata
 		);
 end;

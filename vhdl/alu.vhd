@@ -13,7 +13,7 @@ entity alu is
 		i_a, i_b			: in		STD_LOGIC_VECTOR(bits_c-1 downto 0);
 		i_alucontrol	: in		STD_LOGIC_VECTOR(aluCtrl_c-1 downto 0);
 		o_result		   : buffer	STD_LOGIC_VECTOR(bits_c-1 downto 0);
-		o_zero			: out		STD_LOGIC
+		o_zero, o_ltz			: out		STD_LOGIC
 	);
 	
 end entity;
@@ -56,7 +56,9 @@ begin
 	end process;
 
 	o_zero <= 	'1' when o_result = zero_const_c else
-				'1' when o_result(bits_c - 1) = '1' and alucontrol_s = "100" else
 				'0';
+				
+	o_ltz <= o_result(bits_c - 1);
+
 	
 end;

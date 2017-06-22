@@ -16,7 +16,7 @@ entity datapath is -- MIPS datapath
     i_alusrc, i_regdst    : in    STD_LOGIC;
     i_regwrite, i_jump    : in    STD_LOGIC;
     i_alucontrol        : in    STD_LOGIC_VECTOR(aluCtrl_c - 1 downto 0);
-    o_zero            : out    STD_LOGIC;
+    o_zero, o_ltz            : out    STD_LOGIC;
     o_pc              : buffer  STD_LOGIC_VECTOR(bits_c - 1 downto 0);
     i_instr            : in    STD_LOGIC_VECTOR(bits_c - 1 downto 0);
     o_aluout, o_writedata  : buffer  STD_LOGIC_VECTOR(bits_c - 1 downto 0);
@@ -33,7 +33,7 @@ architecture struct of datapath is
       i_a, i_b      : in STD_LOGIC_VECTOR(bits_c - 1 downto 0);
       i_alucontrol  : in STD_LOGIC_VECTOR(aluCtrl_c - 1 downto 0);
       o_result      : buffer STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-      o_zero      : out STD_LOGIC
+      o_zero, o_ltz      : out STD_LOGIC
     );
   end component;
   component regfile
@@ -98,10 +98,11 @@ architecture struct of datapath is
     );
   end component;
   
-  signal writereg_s                                : STD_LOGIC_VECTOR(reg_c - 1 downto 0);
-  signal pcjump_s, pcnext_s, pcnextbr_s, pcplus4_s, pcbranch_s  : STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-  signal signimm_s, signimmsh_s                        : STD_LOGIC_VECTOR(bits_c - 1 downto 0);
-  signal srca_s, srcb_s, result_s                      : STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+  signal writereg_s, writereg_s2                     						: STD_LOGIC_VECTOR(reg_c - 1 downto 0);
+  signal pcjump_s, pcnext_s, pcnextbr_s, pcplus4_s, pcbranch_s	 			: STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+  signal signimm_s, signimmsh_s, writedata_s                    			: STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+  signal srca_s, srcb_s, result_s                     						: STD_LOGIC_VECTOR(bits_c - 1 downto 0);
+  signal regwrite_s															: STD_LOGIC;
   
   ALIAS pcplus_alto   : STD_LOGIC_VECTOR(opCode_c - 3 downto 0) is
       pcplus4_s(bits_c - 1 downto bits_c - opCode_c + 2);
@@ -120,10 +121,28 @@ architecture struct of datapath is
       
   ALIAS imed_val      : STD_LOGIC_VECTOR(adress_c - 1 downto 0) is
       i_instr(adress_c - 1 downto 0);
+	  
+  ALIAS funct		: STD_LOGIC_VECTOR(opCode_c - 1 downto 0) is
+	  i_instr(opCode_c - 1 downto 0);
+	  
+  ALIAS op			: STD_LOGIC_VECTOR(opCode_c - 1 downto 0) is
+	  i_instr(bits_c - 1 downto bits_c - opCode_c);
       
 begin
 -- next PC logic
-  pcjump_s <= pcplus_alto & instr_baixo & "00";
+  
+-- JAL logic
+  writereg_s2 <= "11111" when i_jump = '1' else
+				 writereg_s;
+  o_writedata <= 	pcplus4_s when i_jump = '1' else
+					writedata_s;
+  
+-- JR logic (else jump)
+  pcjump_s <= 	srca_s when op = "000000" and funct = "001000" else
+				pcplus_alto & instr_baixo & "00";
+  regwrite_s <= '0' when op = "000000" and funct = "001000" else
+				i_regwrite;
+  
   pcreg: flopr
     generic map(bits_c)
     port map(i_clk, i_reset, pcnext_s, o_pc);
@@ -145,8 +164,8 @@ begin
   -- register file logic
   rf: regfile
     generic map(bits_c, reg_c)
-    port map(i_clk, i_regwrite, regs, regt,
-          writereg_s, result_s, srca_s,  o_writedata);
+    port map(i_clk, regwrite_s, regs, regt,
+          writereg_s2, result_s, srca_s,  writedata_s);
   wrmux: mux2
     generic map(reg_c)
     port map(regt, regd, i_regdst, writereg_s);
@@ -162,5 +181,5 @@ begin
     port map(o_writedata, signimm_s, i_alusrc, srcb_s);
   mainalu: alu
     generic map(bits_c, aluCtrl_c)
-    port map(srca_s, srcb_s, i_alucontrol, o_aluout, o_zero); 
+    port map(srca_s, srcb_s, i_alucontrol, o_aluout, o_zero, o_ltz); 
 end;

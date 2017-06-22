@@ -34,16 +34,18 @@ begin
 			when "100011" => controls_s <= "101001000"; -- LW
 			when "101011" => controls_s <= "001010000"; -- SW
 			when "000100" => controls_s <= "000100001"; -- BEQ
-			when "000110" => controls_s <= "000100011"; -- BLEZ
+			when "000101" => controls_s <= "000100001"; -- BNE
+			when "000110" => controls_s <= "000100001"; -- BLEZ
 			when "001000" => controls_s <= "101000000"; -- ADDI
 			when "000010" => controls_s <= "000000100"; -- J
+			when "000011" => controls_s <= "100000100"; -- JAL
 			when others   => controls_s <= "---------"; -- illegal i_op
 		end case;
 	end process;
 	o_regwrite	<= controls_s(8);
-	o_regdst		<= controls_s(7);
-	o_alusrc		<= controls_s(6);
-	o_branch		<= controls_s(5);
+	o_regdst	<= controls_s(7);
+	o_alusrc	<= controls_s(6);
+	o_branch	<= controls_s(5);
 	o_memwrite	<= controls_s(4);
 	o_memtoreg	<= controls_s(3);
 	o_jump		<= controls_s(2);

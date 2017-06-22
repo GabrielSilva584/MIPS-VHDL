@@ -25,7 +25,7 @@ begin
 			mem(conv_integer(i)) := CONV_STD_LOGIC_VECTOR(0, 32);
 		end loop;
 		index := 0;
-		FILE_OPEN (mem_file, "D:/Git/MIPS_VHDL/simul/dat/memfile_BLEZ.dat", READ_MODE);
+		FILE_OPEN (mem_file, "D:/Git/MIPS_VHDL/simul/dat/memfile_JAL_JR.dat", READ_MODE);
 		while not endfile(mem_file) loop
 			readline (mem_file, L);
 			result := 0;
